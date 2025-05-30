@@ -1,5 +1,13 @@
 # beatosdeli
 
+**First Git setup instructions:** 
+
+1. In Mac terminal, navigate to the `Desktop` directory. Ask google how to do this.
+2. Then type `git@github.com:lcvaleski/beatosdeli.git`
+3. Then `cd beatosdeli`. You are now in the folder.
+4. Open this up with Visual Studio Code, or Cursor if you already have it installed.
+5. **Cursor AI will be helpful for you to learn there is no shame in AI coding as long as you are doing it thoughtfully**
+
 **Hi Ellie,** here's the setup so far. When you `git add .`, `git commit -m ""`, and then `git push` from this repository, this is noticed by Cloudflare, which provides a service called "pages":
 
 **Cloudflare Pages** is a platform for deploying websites directly from your Git repository (such as GitHub) to Cloudflare’s global edge network. Here’s what it’s actually doing:

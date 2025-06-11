@@ -3,16 +3,42 @@
 <head>
   <meta charset="utf-8">
   <title>Beato's Deli</title>
+  <style>
+    .content {
+      display: none;
+    }
+    .content.show {
+      display: block;
+    }
+    .logo {
+      cursor: pointer;
+      max-width: 300px;
+      display: block;
+      margin: 20px auto;
+    }
+  </style>
 </head>
 <body>
 <h1>Welcome to Beato's Deli</h1>
-<h2>About Us</h2>
-<p>Welcome to Beato's Deli, your local destination for delicious sandwiches and more.</p>
-<h2>Our Notorious Menu</h2>
-<ul>
-  <li>A Classic Tale</li>
-  <li>Whats App</li>
-  <li>Summit Ice</li>
-  <li>Zissou</li>
-</ul>
+<img src="assets_task_01jxeb9swvfyps8crnaxqnn3fj_1749607160_img_1.webp" alt="Beato's Deli Logo" class="logo" onclick="toggleContent()">
+<div class="content" id="mainContent">
+  <h2>About Us</h2>
+  <p>Welcome to Beato's Deli, your local destination for delicious sandwiches and more.</p>
+  <h2>Our Notorious Menu</h2>
+  <ul>
+    <li>A Classic Tale</li>
+    <li>Whats App</li>
+    <li>Summit Ice</li>
+    <li>Zissou</li>
+  </ul>
+</div>
 <p>© 2024 Beato's Deli. All rights reserved.</p>
+
+<script>
+function toggleContent() {
+  const content = document.getElementById('mainContent');
+  content.classList.toggle('show');
+}
+</script>
+</body>
+</html>

@@ -18,16 +18,17 @@
       position: relative;
     }
 
-    .magnet {
-      display: inline-block;
-      padding: 5px 8px;
-      margin: 4px;
-      background: white;
-      border: 1px solid black;
-      font-size: 14px;
-      cursor: grab;
-      position: absolute;
-    }
+.magnet {
+  display: inline-block;
+  padding: 5px 8px;
+  margin: 4px;
+  background: white;
+  border: 1px solid black;
+  font-size: 14px;
+  cursor: grab;
+  position: absolute;
+  user-select: none; /* prevents text selection while dragging */
+}
 
     a.back {
       display: inline-block;
@@ -80,8 +81,17 @@ words.forEach(word => {
   el.style.top = Math.random() * 60 + "px";
 
   // MOUSE-DRAG START
-  el.onmousedown = function(e) {
-    activeMagnet = el;
+el.onmousedown = function(e) {
+  activeMagnet = el;
+
+  const rect = el.getBoundingClientRect();
+  offsetX = e.clientX - rect.left;
+  offsetY = e.clientY - rect.top;
+
+  el.style.zIndex = 1000;
+  el.style.boxShadow = "0 6px 12px rgba(0,0,0,0.2)";
+  el.style.cursor = "grabbing"; // <-- put here
+};
 
     // calculate offset so cursor stays on the point clicked
     const rect = el.getBoundingClientRect();
@@ -110,9 +120,11 @@ document.addEventListener("mouseup", function() {
   if (activeMagnet) {
     activeMagnet.style.zIndex = 1;
     activeMagnet.style.boxShadow = "";
+    activeMagnet.style.cursor = "grab"; // <-- put here
     activeMagnet = null;
   }
 });
+
 </script>
 
 

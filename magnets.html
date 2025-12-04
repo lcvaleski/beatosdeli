@@ -31,4 +31,97 @@
       user-select: none;
       border-radius: 12px;
       box-shadow: 1px 1px 3px rgba(0,0,0,0.2);
-      white-space: nowrap
+      white-space: nowrap;
+    }
+
+    a.back {
+      display: inline-block;
+      margin-top: 20px;
+      text-decoration: none;
+      color: blue;
+    }
+  </style>
+</head>
+<body>
+
+<h1>Fridge Magnet Poetry</h1>
+<p>Drag the words to make a poem. Click to highlight. New words every day.</p>
+
+<div id="magnet-area"></div>
+
+<a class="back" href="index.html">← Back to Beato's Deli</a>
+
+<script>
+const words = [
+  "a", "the", "this", "that", "my", "your", "their", "some", "each",
+  "in", "on", "under", "with", "without", ".", "?", "!",
+  "moon", "sandwich", "deli", "river", "forest", "castle", "soup",
+  "effervescent", "glimmer", "shadow", "mountain", "dream",
+  "ate", "threw", "ran", "danced", "forgot", "built", "whispered",
+  "sang", "sprinted", "fell", "crafted"
+];
+
+const area = document.getElementById("magnet-area");
+let activeMagnet = null;
+let offsetX = 0, offsetY = 0;
+let moved = false; // track if magnet was moved
+
+words.forEach(word => {
+  const el = document.createElement("div");
+  el.className = "magnet";
+  el.textContent = word;
+
+  const areaRect = area.getBoundingClientRect();
+  el.style.left = Math.random() * (areaRect.width - 100) + "px";
+  el.style.top = Math.random() * (areaRect.height - 30) + "px";
+
+  el.onmousedown = function(e) {
+    activeMagnet = el;
+    moved = false;
+
+    const rect = el.getBoundingClientRect();
+    offsetX = e.clientX - rect.left;
+    offsetY = e.clientY - rect.top;
+
+    el.style.zIndex = 1000;
+    el.style.boxShadow = "0 6px 12px rgba(0,0,0,0.3)";
+    el.style.cursor = "grabbing";
+  };
+
+  el.onmousemove = function() {
+    if (activeMagnet === el) moved = true; // mark as moved
+  };
+
+  el.onmouseup = function() {
+    if (!moved) el.style.color = "#0066CC"; // only color change if not dragged
+  };
+
+  area.appendChild(el);
+});
+
+document.addEventListener("mousemove", function(e) {
+  if (activeMagnet) {
+    const areaRect = area.getBoundingClientRect();
+    let x = e.pageX - offsetX;
+    let y = e.pageY - offsetY;
+
+    x = Math.max(0, Math.min(areaRect.width - activeMagnet.offsetWidth, x));
+    y = Math.max(0, Math.min(areaRect.height - activeMagnet.offsetHeight, y));
+
+    activeMagnet.style.left = x + "px";
+    activeMagnet.style.top = y + "px";
+  }
+});
+
+document.addEventListener("mouseup", function() {
+  if (activeMagnet) {
+    activeMagnet.style.zIndex = 1;
+    activeMagnet.style.boxShadow = "1px 1px 3px rgba(0,0,0,0.2)";
+    activeMagnet.style.cursor = "grab";
+    activeMagnet = null;
+  }
+});
+</script>
+
+</body>
+</html>

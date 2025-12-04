@@ -78,8 +78,15 @@ words.forEach(word => {
   el.style.top = Math.random() * 60 + "px";
 
   // CLICK-TO-PICK-UP / CLICK-TO-RELEASE
-  el.addEventListener('click', function(e) {
-    e.stopPropagation(); // IMPORTANT: prevent document click from immediately releasing
+// PICK-UP / RELEASE with cursor directly on magnet
+el.onmousedown = function(e) {
+  activeMagnet = el;
+  const rect = el.getBoundingClientRect();
+  offsetX = e.clientX - rect.left;
+  offsetY = e.clientY - rect.top;
+  el.style.zIndex = 1000; // bring to front
+  el.style.boxShadow = "0 6px 12px rgba(0,0,0,0.2)";
+};
 
     // If nothing is active → pick this magnet
     if (!activeMagnet) {

@@ -64,7 +64,7 @@ const words = [
 
 const area = document.getElementById("magnet-area");
 
-// GLOBAL drag variables
+// GLOBAL variables for dragging
 let activeMagnet = null;
 let offsetX = 0;
 let offsetY = 0;
@@ -79,12 +79,15 @@ words.forEach(word => {
   el.style.left = Math.random() * 70 + "%";
   el.style.top = Math.random() * 60 + "px";
 
-  // PICK-UP / release on drag
+  // MOUSE-DRAG START
   el.onmousedown = function(e) {
     activeMagnet = el;
+
+    // calculate offset so cursor stays on the point clicked
     const rect = el.getBoundingClientRect();
     offsetX = e.clientX - rect.left;
     offsetY = e.clientY - rect.top;
+
     el.style.zIndex = 1000;
     el.style.boxShadow = "0 6px 12px rgba(0,0,0,0.2)";
   };
@@ -92,17 +95,17 @@ words.forEach(word => {
   area.appendChild(el);
 });
 
-// move active magnet with mouse
+// move magnet with mouse while holding
 document.addEventListener("mousemove", function(e) {
   if (activeMagnet) {
-    const x = Math.max(0, Math.min(window.innerWidth - activeMagnet.offsetWidth, e.pageX - offsetX));
-    const y = Math.max(0, Math.min(window.innerHeight - activeMagnet.offsetHeight, e.pageY - offsetY));
+    const x = e.pageX - offsetX;
+    const y = e.pageY - offsetY;
     activeMagnet.style.left = x + "px";
     activeMagnet.style.top = y + "px";
   }
 });
 
-// release on mouseup
+// release magnet on mouseup
 document.addEventListener("mouseup", function() {
   if (activeMagnet) {
     activeMagnet.style.zIndex = 1;
@@ -111,6 +114,7 @@ document.addEventListener("mouseup", function() {
   }
 });
 </script>
+
 
 </body>
 </html>

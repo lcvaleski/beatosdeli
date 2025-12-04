@@ -72,27 +72,32 @@ words.forEach(word => {
   el.style.left = Math.random() * 70 + "%";
   el.style.top = Math.random() * 60 + "px";
 
-  // basic dragging
-  el.onmousedown = function(e) {
-    const shiftX = e.clientX - el.getBoundingClientRect().left;
-    const shiftY = e.clientY - el.getBoundingClientRect().top;
+ // CLICK-TO-PICK-UP / CLICK-TO-RELEASE drag system
+let activeMagnet = null;
+let offsetX = 0;
+let offsetY = 0;
 
-    function moveAt(pageX, pageY) {
-      el.style.left = (pageX - shiftX) + "px";
-      el.style.top = (pageY - shiftY) + "px";
-    }
+el.onclick = function(e) {
+  // If clicking a new magnet → pick it up
+  if (!activeMagnet) {
+    activeMagnet = el;
+    const rect = el.getBoundingClientRect();
+    offsetX = e.clientX - rect.left;
+    offsetY = e.clientY - rect.top;
+  } 
+  // Clicking again while active → drop it
+  else if (activeMagnet === el) {
+    activeMagnet = null;
+  }
+};
 
-    function onMouseMove(e) {
-      moveAt(e.pageX, e.pageY);
-    }
-
-    document.addEventListener('mousemove', onMouseMove);
-
-    el.onmouseup = function() {
-      document.removeEventListener('mousemove', onMouseMove);
-      el.onmouseup = null;
-    };
-  };
+// move active magnet with mouse
+document.addEventListener("mousemove", function(e) {
+  if (activeMagnet) {
+    activeMagnet.style.left = (e.pageX - offsetX) + "px";
+    activeMagnet.style.top = (e.pageY - offsetY) + "px";
+  }
+});
 
   area.appendChild(el);
 });

@@ -12,23 +12,27 @@
     #magnet-area {
       margin: 40px auto;
       width: 90%;
-      min-height: 300px;
+      min-height: 400px;
       border: 1px dashed #aaa;
       padding: 10px;
       position: relative;
+      overflow: hidden;
     }
 
-.magnet {
-  display: inline-block;
-  padding: 5px 8px;
-  margin: 4px;
-  background: white;
-  border: 1px solid black;
-  font-size: 14px;
-  cursor: grab;
-  position: absolute;
-  user-select: none; /* prevents text selection while dragging */
-}
+    .magnet {
+      display: inline-block;
+      padding: 8px 12px;
+      margin: 4px;
+      background: #fff;
+      border: 1px solid black;
+      font-size: 14px;
+      cursor: grab;
+      position: absolute;
+      user-select: none;        /* prevent text selection */
+      border-radius: 12px;      /* rounded corners */
+      box-shadow: 1px 1px 3px rgba(0,0,0,0.2);
+      white-space: nowrap;      /* prevent wrapping inside magnet */
+    }
 
     a.back {
       display: inline-block;
@@ -50,15 +54,15 @@
 <script>
 // 30-word pool: basic, fun, action
 const words = [
-  // basic
+  // basic words
   "a", "the", "this", "that", "my", "your", "their", "some", "each",
   "in", "on", "under", "with", "without",
 
-  // nouns & fun words
+  // fun nouns/adjectives
   "moon", "sandwich", "deli", "river", "forest", "castle", "soup",
   "effervescent", "glimmer", "shadow", "mountain", "dream",
 
-  // verbs / actions
+  // verbs / action words
   "ate", "threw", "ran", "danced", "forgot", "built", "whispered",
   "sang", "sprinted", "fell", "crafted"
 ];
@@ -77,8 +81,9 @@ words.forEach(word => {
   el.textContent = word;
 
   // random starting position
-  el.style.left = Math.random() * 70 + "%";
-  el.style.top = Math.random() * 60 + "px";
+  const areaRect = area.getBoundingClientRect();
+  el.style.left = Math.random() * (areaRect.width - 100) + "px"; // 100px buffer
+  el.style.top = Math.random() * (areaRect.height - 30) + "px";   // 30px buffer
 
   // MOUSE-DRAG START
   el.onmousedown = function(e) {
@@ -89,7 +94,7 @@ words.forEach(word => {
     offsetY = e.clientY - rect.top;
 
     el.style.zIndex = 1000;
-    el.style.boxShadow = "0 6px 12px rgba(0,0,0,0.2)";
+    el.style.boxShadow = "0 6px 12px rgba(0,0,0,0.3)";
     el.style.cursor = "grabbing";
   };
 
@@ -99,8 +104,15 @@ words.forEach(word => {
 // move magnet with mouse while holding
 document.addEventListener("mousemove", function(e) {
   if (activeMagnet) {
-    const x = e.pageX - offsetX;
-    const y = e.pageY - offsetY;
+    const areaRect = area.getBoundingClientRect();
+
+    let x = e.pageX - offsetX;
+    let y = e.pageY - offsetY;
+
+    // keep magnet inside area
+    x = Math.max(0, Math.min(areaRect.width - activeMagnet.offsetWidth, x));
+    y = Math.max(0, Math.min(areaRect.height - activeMagnet.offsetHeight, y));
+
     activeMagnet.style.left = x + "px";
     activeMagnet.style.top = y + "px";
   }
@@ -110,15 +122,12 @@ document.addEventListener("mousemove", function(e) {
 document.addEventListener("mouseup", function() {
   if (activeMagnet) {
     activeMagnet.style.zIndex = 1;
-    activeMagnet.style.boxShadow = "";
-    activeMagnet.style.cursor = "grab"; // <-- put here
+    activeMagnet.style.boxShadow = "1px 1px 3px rgba(0,0,0,0.2)";
+    activeMagnet.style.cursor = "grab";
     activeMagnet = null;
   }
 });
-
 </script>
-
 
 </body>
 </html>
-

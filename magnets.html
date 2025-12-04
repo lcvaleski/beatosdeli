@@ -78,20 +78,38 @@ words.forEach(word => {
   el.style.top = Math.random() * 60 + "px";
 
   // CLICK-TO-PICK-UP / CLICK-TO-RELEASE
-  el.onclick = function(e) {
+  el.addEventListener('click', function(e) {
+    e.stopPropagation(); // IMPORTANT: prevent document click from immediately releasing
+
+    // If nothing is active → pick this magnet
     if (!activeMagnet) {
-      // pick it up
       activeMagnet = el;
       const rect = el.getBoundingClientRect();
       offsetX = e.clientX - rect.left;
       offsetY = e.clientY - rect.top;
       el.style.zIndex = 1000; // bring to front
-    } else if (activeMagnet === el) {
-      // drop it
-      activeMagnet = null;
-      el.style.zIndex = 1;
+      el.style.boxShadow = "0 6px 12px rgba(0,0,0,0.2)"; // visual highlight
     }
-  };
+    // If this magnet is already active → drop it
+    else if (activeMagnet === el) {
+      el.style.zIndex = 1;
+      el.style.boxShadow = "";
+      activeMagnet = null;
+    }
+    // If another magnet was active → switch to this one
+    else {
+      // drop previous
+      activeMagnet.style.zIndex = 1;
+      activeMagnet.style.boxShadow = "";
+      // pick this one
+      activeMagnet = el;
+      const rect = el.getBoundingClientRect();
+      offsetX = e.clientX - rect.left;
+      offsetY = e.clientY - rect.top;
+      el.style.zIndex = 1000;
+      el.style.boxShadow = "0 6px 12px rgba(0,0,0,0.2)";
+    }
+  });
 
   area.appendChild(el);
 });
@@ -99,11 +117,47 @@ words.forEach(word => {
 // Move active magnet with mouse
 document.addEventListener("mousemove", function(e) {
   if (activeMagnet) {
-    activeMagnet.style.left = (e.pageX - offsetX) + "px";
-    activeMagnet.style.top = (e.pageY - offsetY) + "px";
+    // keep magnet within window (basic clamping)
+    const x = Math.max(0, Math.min(window.innerWidth - activeMagnet.offsetWidth, e.pageX - offsetX));
+    const y = Math.max(0, Math.min(window.innerHeight - activeMagnet.offsetHeight, e.pageY - offsetY));
+    activeMagnet.style.left = x + "px";
+    activeMagnet.style.top = y + "px";
   }
 });
+
+// Click anywhere to release (also works if user clicks space outside magnets)
+document.addEventListener('click', function() {
+  if (activeMagnet) {
+    activeMagnet.style.zIndex = 1;
+    activeMagnet.style.boxShadow = "";
+    activeMagnet = null;
+  }
+});
+
+// --- OPTIONAL: basic touch support (tap to pick up, tap anywhere to drop, drag to move) ---
+document.addEventListener('touchstart', function(e) {
+  if (!e.target.classList || !e.target.classList.contains('magnet')) {
+    // touching empty space should drop active magnet
+    if (activeMagnet) {
+      activeMagnet.style.zIndex = 1;
+      activeMagnet.style.boxShadow = "";
+      activeMagnet = null;
+    }
+  }
+}, {passive: true});
+
+document.addEventListener('touchmove', function(e) {
+  if (activeMagnet && e.touches && e.touches[0]) {
+    const t = e.touches[0];
+    const x = Math.max(0, Math.min(window.innerWidth - activeMagnet.offsetWidth, t.pageX - offsetX));
+    const y = Math.max(0, Math.min(window.innerHeight - activeMagnet.offsetHeight, t.pageY - offsetY));
+    activeMagnet.style.left = x + "px";
+    activeMagnet.style.top = y + "px";
+    e.preventDefault();
+  }
+}, {passive: false});
 </script>
+
 
 </body>
 </html>

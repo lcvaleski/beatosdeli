@@ -24,6 +24,11 @@
       text-align: left;
     }
   </style>
+.hidden-link {
+  text-decoration: none;  /* remove underline */
+  color: inherit;         /* use the surrounding text color */
+  cursor: pointer;        /* optional: still shows clickable cursor */
+}
 </head>
 <body>
 <h1>Welcome to Beato's Deli</h1>
@@ -32,13 +37,13 @@
   <h2>About Us</h2>
   <p>Welcome to Beato's Deli, your local destination for delicious sandwiches and more.</p>
   <h2>Our Notorious Menu</h2>
-  <ul>
-    <li>A Classic Tale</li>
-    <li>Whats App</li>
-    <li>Summit Ice</li>
-    <li>Zissou</li>
-  <li><a href="magnets.html">The Cooler</a></li>
-  </ul>
+<ul>
+  <li>A Classic Tale</li>
+  <li>Whats App</li>
+  <li>Summit Ice</li>
+  <li>Zissou</li>
+  <li><a href="magnets.html" class="hidden-link">The Cooler</a></li>
+</ul>
 </div>
 <p>© 2024 Beato's Deli. All rights reserved.</p>
 

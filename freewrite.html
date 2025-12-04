@@ -1,76 +1,182 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <meta charset="utf-8">
-  <title>Summit Ice – Free Write</title>
-  <style>
-    body {
-      text-align: center;
-      font-family: Arial, sans-serif;
-      margin: 20px;
-    }
+<meta charset="UTF-8">
+<title>Summit Ice Freewrite – Beato's Deli</title>
+<style>
+  body {
+    text-align: center;
+    font-family: Arial, sans-serif;
+    background: #f0f0f0;
+    margin: 0;
+    padding: 0;
+  }
 
-  canvas {
-  border: 1px solid #ccc;
-  display: block;
-  margin: 20px auto;
-  background: #f0f0f0; /* light grey so white zig-zag shows */
-}
+  #timer {
+    font-size: 24px;
+    margin-top: 20px;
+  }
 
-    textarea {
-      width: 90%;
-      height: 250px;
-      font-family: Arial, sans-serif;
-      font-size: 16px;
-      padding: 10px;
-      margin: 20px 0;
-      resize: vertical;
-    }
+  #mountain-canvas {
+    border: 1px solid #ccc;
+    display: block;
+    margin: 20px auto;
+    background: #e0e0e0;
+  }
 
-    button {
-      padding: 10px 20px;
-      font-size: 16px;
-      cursor: pointer;
-    }
+  #typing-area {
+    width: 80%;
+    height: 200px;
+    margin: 20px auto;
+    font-size: 18px;
+    font-family: Arial, sans-serif;
+    padding: 10px;
+    border: 1px solid #aaa;
+    border-radius: 8px;
+    display: block;
+    resize: none;
+  }
 
-    #doneMessage {
-      color: green;
-      display: none;
-      margin-top: 10px;
-      font-weight: bold;
-    }
-  </style>
+  #done-button {
+    padding: 10px 20px;
+    font-size: 16px;
+    margin-bottom: 40px;
+    cursor: pointer;
+    border-radius: 5px;
+    border: 1px solid #333;
+    background: #fff;
+  }
+</style>
 </head>
 <body>
 
-<h1>Summit Ice – Free Write</h1>
-
-<canvas id="mountainCanvas" width="600" height="200"></canvas>
-
-<textarea id="freewriteArea" placeholder="Start typing your thoughts here..."></textarea>
+<h1>Summit Ice Freewrite</h1>
+<div id="timer">5:00</div>
+<canvas id="mountain-canvas" width="600" height="300"></canvas>
+<textarea id="typing-area" placeholder="Start typing your freewrite here..."></textarea>
 <br>
-<button id="doneButton">Done</button>
-<p id="doneMessage">All done!</p>
+<button id="done-button">Done</button>
 
 <script>
-const canvas = document.getElementById('mountainCanvas');
-const ctx = canvas.getContext('2d');
-const doneButton = document.getElementById('doneButton');
-const textArea = document.getElementById('freewriteArea');
-const doneMessage = document.getElementById('doneMessage');
+const canvas = document.getElementById("mountain-canvas");
+const ctx = canvas.getContext("2d");
+const totalTime = 300000; // 5 minutes in milliseconds
+let startTime = null;
 
-// Draw mountain with zig-zag near peak
+// Timer
+const timerEl = document.getElementById("timer");
+function updateTimer(elapsed) {
+  const remaining = Math.max(0, totalTime - elapsed);
+  const minutes = Math.floor(remaining / 60000);
+  const seconds = Math.floor((remaining % 60000) / 1000);
+  timerEl.textContent = `${minutes}:${seconds.toString().padStart(2, "0")}`;
+}
+
+// Draw Mountain
 function drawMountain() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-  // mountain body
-  ctx.fillStyle = "#ccc";
+  // Mountain body
+  ctx.fillStyle = "#888";
   ctx.beginPath();
-  ctx.moveTo(50, 200);
-  ctx.lineTo(300, 50); // peak
-  ctx.lineTo(550, 200);
+  ctx.moveTo(50, canvas.height - 20);
+  ctx.lineTo(canvas.width/2, canvas.height*0.3);
+  ctx.lineTo(canvas.width - 50, canvas.height - 20);
   ctx.closePath();
   ctx.fill();
 
-  // zig-zag near peak
+  // Zig-zag near peak
   ctx.strokeStyle = "#fff";
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  const peakX = canvas.width/2;
+  const peakY = canvas.height*0.3;
+  ctx.moveTo(peakX, peakY);
+  ctx.lineTo(peakX - 20, peakY + 20);
+  ctx.lineTo(peakX + 20, peakY + 40);
+  ctx.lineTo(peakX - 20, peakY + 60);
+  ctx.stroke();
+}
+
+// Draw Stick Figure Climber
+function drawClimber(x, y) {
+  ctx.strokeStyle = "black";
+  ctx.lineWidth = 2;
+
+  // head
+  ctx.beginPath();
+  ctx.arc(x, y - 10, 5, 0, Math.PI * 2);
+  ctx.stroke();
+
+  // body
+  ctx.beginPath();
+  ctx.moveTo(x, y - 5);
+  ctx.lineTo(x, y + 10); // torso
+  ctx.moveTo(x, y + 10);
+  ctx.lineTo(x - 5, y + 20); // left leg
+  ctx.moveTo(x, y + 10);
+  ctx.lineTo(x + 5, y + 20); // right leg
+  ctx.moveTo(x, y);
+  ctx.lineTo(x - 5, y - 5); // left arm
+  ctx.moveTo(x, y);
+  ctx.lineTo(x + 5, y - 5); // right arm
+  ctx.stroke();
+
+  // backpack
+  ctx.fillStyle = "black";
+  ctx.fillRect(x - 4, y - 8, 8, 10);
+}
+
+// Get climber position based on elapsed time
+function getClimberPosition(elapsed) {
+  const climbDuration = totalTime / 2;
+  const descentDuration = totalTime / 2;
+
+  if (elapsed <= climbDuration) {
+    const t = elapsed / climbDuration;
+    const x = 50 + (canvas.width/2 - 50) * t;
+    const y = canvas.height - 20 + ((canvas.height*0.3 - (canvas.height-20)) * t);
+    return { x, y };
+  } else if (elapsed <= totalTime) {
+    const t = (elapsed - climbDuration) / descentDuration;
+    const x = canvas.width/2 + ((canvas.width-50) - canvas.width/2) * t;
+    const y = canvas.height*0.3 + ((canvas.height-20) - canvas.height*0.3) * t;
+    return { x, y };
+  } else {
+    return { x: canvas.width-50, y: canvas.height-20 };
+  }
+}
+
+// Animation loop
+function animate(timestamp) {
+  if (!startTime) startTime = timestamp;
+  const elapsed = timestamp - startTime;
+
+  updateTimer(elapsed);
+  drawMountain();
+  const pos = getClimberPosition(elapsed);
+  drawClimber(pos.x, pos.y);
+
+  // Storm during descent
+  if (elapsed > totalTime / 2 && elapsed <= totalTime) {
+    const stormProgress = (elapsed - totalTime/2) / (totalTime/2);
+    ctx.fillStyle = `rgba(0,0,0,${0.2 * stormProgress})`;
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+  }
+
+  if (elapsed < totalTime) {
+    requestAnimationFrame(animate);
+  }
+}
+
+// Start animation
+requestAnimationFrame(animate);
+
+// Done button behavior
+document.getElementById("done-button").addEventListener("click", () => {
+  alert("Freewrite done! (Your text is not saved.)");
+});
+</script>
+
+</body>
+</html>

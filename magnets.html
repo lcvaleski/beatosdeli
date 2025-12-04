@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Fridge Magnets – Beato's Deli</title>
+  <style>
+    body {
+      text-align: center;
+      font-family: sans-serif;
+    }
+
+    #magnet-area {
+      margin: 40px auto;
+      width: 90%;
+      min-height: 300px;
+      border: 1px dashed #aaa;
+      padding: 10px;
+      position: relative;
+    }
+
+    .magnet {
+      display: inline-block;
+      padding: 5px 8px;
+      margin: 4px;
+      background: white;
+      border: 1px solid black;
+      font-size: 14px;
+      cursor: grab;
+      position: absolute;
+    }
+
+    a.back {
+      display: inline-block;
+      margin-top: 20px;
+      text-decoration: none;
+      color: blue;
+    }
+  </style>
+</head>
+<body>
+
+<h1>Fridge Magnet Poetry</h1>
+<p>Drag the words to make a poem. A tiny new theme appears every day.</p>
+
+<div id="magnet-area"></div>
+
+<a class="back" href="index.html">← Back to Beato's Deli</a>
+
+<script>
+// Small daily themes (simple + short)
+const themes = {
+  medieval: ["castle","sword","dragon","gold","moon","quest"],
+  mountains: ["peak","ridge","pine","cloud","echo","stone"],
+  ocean: ["wave","salt","blue","tide","shell","deep"],
+  deli: ["bagel","coffee","city","steam","window","toast"]
+};
+
+// Pick theme based on calendar day
+const themeNames = Object.keys(themes);
+const todayTheme = themeNames[new Date().getDate() % themeNames.length];
+const words = themes[todayTheme];
+
+const area = document.getElementById("magnet-area");
+
+// Create randomly placed draggables
+words.forEach(word => {
+  const el = document.createElement("div");
+  el.className = "magnet";
+  el.textContent = word;
+
+  // random starting position
+  el.style.left = Math.random() * 70 + "%";
+  el.style.top = Math.random() * 60 + "px";
+
+  // basic dragging
+  el.onmousedown = function(e) {
+    const shiftX = e.clientX - el.getBoundingClientRect().left;
+    const shiftY = e.clientY - el.getBoundingClientRect().top;
+
+    function moveAt(pageX, pageY) {
+      el.style.left = (pageX - shiftX) + "px";
+      el.style.top = (pageY - shiftY) + "px";
+    }
+
+    function onMouseMove(e) {
+      moveAt(e.pageX, e.pageY);
+    }
+
+    document.addEventListener('mousemove', onMouseMove);
+
+    el.onmouseup = function() {
+      document.removeEventListener('mousemove', onMouseMove);
+      el.onmouseup = null;
+    };
+  };
+
+  area.appendChild(el);
+});
+</script>
+
+</body>
+</html>

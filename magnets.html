@@ -49,10 +49,10 @@
 <script>
 // Small daily themes (simple + short)
 const themes = {
-  medieval: ["castle","huzzah","lost", "shine" "shimmer", "elf", "ran", "spirit", "love", "kiss", "true", "fight", "map," "find", "sword","dragon","gold","moon","quest"],
-  mountains: ["peak", "soul", "shiver" "gasp", "air", "breath", "find", "flag", "muster", "pride", "smell", "owl", "scream", "ridge","pine","cloud","echo","stone"],
-  ocean: ["wave","salt","blue","tide","shell","deep", "sail", "wind", "breeze", "charge", "swim", "shark", "climb", "courage", "find"],
-  deli: ["bagel","coffee","city","steam","window","toast", "school", "tamale"]
+  medieval: ["castle","sword","dragon","gold","moon","quest"],
+  mountains: ["peak","ridge","pine","cloud","echo","stone"],
+  ocean: ["wave","salt","blue","tide","shell","deep"],
+  deli: ["bagel","coffee","city","steam","window","toast"]
 };
 
 // Pick theme based on calendar day
@@ -61,6 +61,11 @@ const todayTheme = themeNames[new Date().getDate() % themeNames.length];
 const words = themes[todayTheme];
 
 const area = document.getElementById("magnet-area");
+
+// GLOBAL drag variables (must be OUTSIDE the loop)
+let activeMagnet = null;
+let offsetX = 0;
+let offsetY = 0;
 
 // Create randomly placed draggables
 words.forEach(word => {
@@ -72,34 +77,31 @@ words.forEach(word => {
   el.style.left = Math.random() * 70 + "%";
   el.style.top = Math.random() * 60 + "px";
 
- // CLICK-TO-PICK-UP / CLICK-TO-RELEASE drag system
-let activeMagnet = null;
-let offsetX = 0;
-let offsetY = 0;
+  // CLICK-TO-PICK-UP / CLICK-TO-RELEASE
+  el.onclick = function(e) {
+    if (!activeMagnet) {
+      // pick it up
+      activeMagnet = el;
+      const rect = el.getBoundingClientRect();
+      offsetX = e.clientX - rect.left;
+      offsetY = e.clientY - rect.top;
+      el.style.zIndex = 1000; // bring to front
+    } else if (activeMagnet === el) {
+      // drop it
+      activeMagnet = null;
+      el.style.zIndex = 1;
+    }
+  };
 
-el.onclick = function(e) {
-  // If clicking a new magnet → pick it up
-  if (!activeMagnet) {
-    activeMagnet = el;
-    const rect = el.getBoundingClientRect();
-    offsetX = e.clientX - rect.left;
-    offsetY = e.clientY - rect.top;
-  } 
-  // Clicking again while active → drop it
-  else if (activeMagnet === el) {
-    activeMagnet = null;
-  }
-};
+  area.appendChild(el);
+});
 
-// move active magnet with mouse
+// Move active magnet with mouse
 document.addEventListener("mousemove", function(e) {
   if (activeMagnet) {
     activeMagnet.style.left = (e.pageX - offsetX) + "px";
     activeMagnet.style.top = (e.pageY - offsetY) + "px";
   }
-});
-
-  area.appendChild(el);
 });
 </script>
 

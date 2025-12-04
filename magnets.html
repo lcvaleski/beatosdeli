@@ -97,6 +97,12 @@ words.forEach(word => {
     el.style.boxShadow = "0 6px 12px rgba(0,0,0,0.3)";
     el.style.cursor = "grabbing";
   };
+// inside words.forEach
+el.onclick = function(e) {
+  // Prevent dragging conflict
+  e.stopPropagation(); 
+  el.style.color = "#0066CC";
+};
 
   area.appendChild(el);
 });

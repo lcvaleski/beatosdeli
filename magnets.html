@@ -81,25 +81,16 @@ words.forEach(word => {
   el.style.top = Math.random() * 60 + "px";
 
   // MOUSE-DRAG START
-el.onmousedown = function(e) {
-  activeMagnet = el;
+  el.onmousedown = function(e) {
+    activeMagnet = el;
 
-  const rect = el.getBoundingClientRect();
-  offsetX = e.clientX - rect.left;
-  offsetY = e.clientY - rect.top;
-
-  el.style.zIndex = 1000;
-  el.style.boxShadow = "0 6px 12px rgba(0,0,0,0.2)";
-  el.style.cursor = "grabbing"; // <-- put here
-};
-
-    // calculate offset so cursor stays on the point clicked
     const rect = el.getBoundingClientRect();
     offsetX = e.clientX - rect.left;
     offsetY = e.clientY - rect.top;
 
     el.style.zIndex = 1000;
     el.style.boxShadow = "0 6px 12px rgba(0,0,0,0.2)";
+    el.style.cursor = "grabbing";
   };
 
   area.appendChild(el);

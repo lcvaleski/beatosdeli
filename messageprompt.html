@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Message in a Bottle</title>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    text-align: center;
+    background: #fff;
+    margin: 0;
+    padding: 40px 20px;
+  }
+
+  h1 {
+    display: none;
+  }
+
+  #bottle-canvas {
+    border: none;
+    display: block;
+    margin: 20px auto;
+    background: transparent;
+    width: 60%;
+    max-width: 300px;
+    height: 350px;
+    cursor: pointer;
+  }
+
+  #bottle-canvas:hover {
+    opacity: 0.8;
+  }
+
+  #message {
+    font-size: 18px;
+    font-style: italic;
+    color: #333;
+    max-width: 500px;
+    margin: 30px auto;
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background: #fffef7;
+    min-height: 80px;
+    line-height: 1.6;
+    display: none;
+  }
+
+  #message.show {
+    display: block;
+  }
+
+  #instruction {
+    font-size: 16px;
+    color: #666;
+    margin: 20px 0;
+  }
+
+  .back-link {
+    display: inline-block;
+    margin-top: 40px;
+    text-decoration: none;
+    color: #0066cc;
+  }
+</style>
+</head>
+<body>
+
+<h1>Message in a Bottle</h1>
+  <div id="instruction">Ahoy there zissou, looks like you have a message</div>
+
+<canvas id="bottle-canvas"></canvas>
+
+<div id="message"></div>
+
+<br>
+<a class="back-link" href="index.html">← Back to Home</a>
+
+<script>
+const canvas = document.getElementById("bottle-canvas");
+const ctx = canvas.getContext("2d");
+
+// Make canvas responsive
+function resizeCanvas() {
+  canvas.width = canvas.clientWidth;
+  canvas.height = canvas.clientHeight;
+  drawBottle();
+}
+resizeCanvas();
+window.addEventListener("resize", resizeCanvas);
+
+// Writing prompts
+const prompts = [
+  "Write about a secret you've never told anyone.",
+  "Describe the last time you felt truly free.",
+  "What would you say to your younger self?",
+  "Write a letter to someone you miss.",
+  "Imagine you wake up in a different life. What do you see?",
+  "Tell the story of a scar, visible or invisible.",
+  "Write about a moment when everything changed.",
+  "Describe a place that feels like home, even if you've never been there.",
+  "What song makes you cry, and why?",
+  "Write about something you lost and never found.",
+  "If you could relive one day, which would it be?",
+  "Describe a stranger who changed your life.",
+  "Write about a promise you made to yourself.",
+  "What are you running from? What are you running toward?",
+  "Tell the story of a door you never walked through.",
+  "Write a conversation between you and the ocean.",
+  "Describe the taste of a memory.",
+  "What would you do if you weren't afraid?",
+  "Write about the last time you laughed until you cried.",
+  "Imagine finding this message 10 years from now. What does it say?",
+  "Describe a moment of perfect stillness.",
+  "Write about someone who taught you something without meaning to.",
+  "What does forgiveness look like?",
+  "Tell the story of a beginning disguised as an ending.",
+  "Write about a color that reminds you of someone.",
+  "Describe the weight of something you're carrying.",
+  "What small moment do you wish you could bottle up forever?",
+  "Write a postcard from a place that only exists in your mind.",
+  "Describe a time when silence said everything.",
+  "What would you tell the stars if they were listening?"
+];
+
+let hasOpened = false;
+
+// Draw bottle (tilted/floating style)
+function drawBottle() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  
+  ctx.save();
+  ctx.translate(canvas.width / 2, canvas.height / 2);
+  ctx.rotate(-0.3); // Tilt the bottle
+  
+  ctx.strokeStyle = "#000";
+  ctx.fillStyle = "#fff";
+  ctx.lineWidth = 3;
+  
+  const bottleLength = canvas.width * 0.6;
+  const bottleRadius = canvas.height * 0.12;
+  
+  // Main bottle body (horizontal cylinder)
+  ctx.beginPath();
+  ctx.moveTo(-bottleLength/2, -bottleRadius);
+  ctx.lineTo(bottleLength/2 - bottleRadius, -bottleRadius);
+  ctx.arc(bottleLength/2 - bottleRadius, 0, bottleRadius, -Math.PI/2, Math.PI/2);
+  ctx.lineTo(-bottleLength/2, bottleRadius);
+  ctx.arc(-bottleLength/2, 0, bottleRadius, Math.PI/2, -Math.PI/2);
+  ctx.closePath();
+  ctx.fill();
+  ctx.stroke();
+  
+  // Cork/cap on the left
+  const capWidth = bottleRadius * 0.8;
+  const capHeight = bottleRadius * 1.3;
+  ctx.fillStyle = "#8B4513";
+  ctx.fillRect(-bottleLength/2 - capWidth, -capHeight/2, capWidth, capHeight);
+  ctx.strokeRect(-bottleLength/2 - capWidth, -capHeight/2, capWidth, capHeight);
+  
+  // Cork rings
+  ctx.strokeStyle = "#654321";
+  ctx.lineWidth = 1.5;
+  ctx.beginPath();
+  ctx.moveTo(-bottleLength/2 - capWidth + 5, -capHeight/3);
+  ctx.lineTo(-bottleLength/2 - 5, -capHeight/3);
+  ctx.moveTo(-bottleLength/2 - capWidth + 5, capHeight/3);
+  ctx.lineTo(-bottleLength/2 - 5, capHeight/3);
+  ctx.stroke();
+  
+  // Rolled paper inside (if not opened)
+  if (!hasOpened) {
+    ctx.fillStyle = "#fffef7";
+    ctx.strokeStyle = "#000";
+    ctx.lineWidth = 2;
+    
+    const paperLength = bottleLength * 0.4;
+    const paperRadius = bottleRadius * 0.5;
+    
+    // Paper roll
+    ctx.beginPath();
+    ctx.ellipse(0, 0, paperLength/2, paperRadius, 0, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.stroke();
+    
+    // Paper edge lines
+    ctx.strokeStyle = "#ccc";
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(-paperLength/3, -paperRadius);
+    ctx.lineTo(-paperLength/3, paperRadius);
+    ctx.moveTo(paperLength/3, -paperRadius);
+    ctx.lineTo(paperLength/3, paperRadius);
+    ctx.stroke();
+    
+    // String/ribbon
+    ctx.strokeStyle = "#8B0000";
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(-paperLength/4, -paperRadius * 1.2);
+    ctx.lineTo(-paperLength/4, paperRadius * 1.2);
+    ctx.stroke();
+  }
+  
+  ctx.restore();
+  
+  // Waves at bottom
+  ctx.strokeStyle = "#0066cc";
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  const waveY = canvas.height * 0.85;
+  ctx.moveTo(0, waveY);
+  for (let x = 0; x < canvas.width; x += 20) {
+    ctx.quadraticCurveTo(x + 5, waveY - 5, x + 10, waveY);
+    ctx.quadraticCurveTo(x + 15, waveY + 5, x + 20, waveY);
+  }
+  ctx.stroke();
+}
+
+// Get random prompt
+function getRandomPrompt() {
+  const randomIndex = Math.floor(Math.random() * prompts.length);
+  return prompts[randomIndex];
+}
+
+// Open bottle
+canvas.addEventListener('click', function() {
+  hasOpened = true;
+  const messageEl = document.getElementById('message');
+  const instructionEl = document.getElementById('instruction');
+  
+  messageEl.textContent = `"${getRandomPrompt()}"`;
+  messageEl.classList.add('show');
+  instructionEl.textContent = 'Click again for a new message';
+  
+  drawBottle();
+});
+
+drawBottle();
+
+</script>
+
+</body>
+</html>

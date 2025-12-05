@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Outwrite the storm</title>
+<title>Summit Ice Freewrite – Beato's Deli</title>
 <style>
   body {
     text-align: center;
@@ -53,9 +53,9 @@
 </head>
 <body>
 
-<h1>You have 5 minutes. Outwrite the storm. </h1>
+<h1>Summit Ice Freewrite</h1>
 <div id="timer">5:00</div>
-<canvas id="mountain-canvas" width="600" height="300"></canvas>
+<canvas id="mountain-canvas"></canvas>
 <textarea id="typing-area" placeholder="Start typing your freewrite here..."></textarea>
 <br>
 <button id="done-button">Done</button>
@@ -63,7 +63,16 @@
 <script>
 const canvas = document.getElementById("mountain-canvas");
 const ctx = canvas.getContext("2d");
-const totalTime = 300000; // 5 minutes in milliseconds
+
+// Make canvas responsive
+function resizeCanvas() {
+  canvas.width = canvas.clientWidth;
+  canvas.height = canvas.clientHeight;
+}
+resizeCanvas();
+window.addEventListener("resize", resizeCanvas);
+
+const totalTime = 300000; // 5 minutes
 let startTime = null;
 
 // Timer
@@ -75,7 +84,7 @@ function updateTimer(elapsed) {
   timerEl.textContent = `${minutes}:${seconds.toString().padStart(2, "0")}`;
 }
 
-// Draw Mountain
+// Draw mountain
 function drawMountain() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 
@@ -101,17 +110,15 @@ function drawMountain() {
   ctx.stroke();
 }
 
-// Draw Stick Figure Climber
+// Draw climber
 function drawClimber(x, y) {
   ctx.strokeStyle = "black";
   ctx.lineWidth = 2;
 
-  // head
   ctx.beginPath();
-  ctx.arc(x, y - 10, 5, 0, Math.PI * 2);
+  ctx.arc(x, y - 10, 5, 0, Math.PI*2); // head
   ctx.stroke();
 
-  // body
   ctx.beginPath();
   ctx.moveTo(x, y - 5);
   ctx.lineTo(x, y + 10); // torso
@@ -125,16 +132,14 @@ function drawClimber(x, y) {
   ctx.lineTo(x + 5, y - 5); // right arm
   ctx.stroke();
 
-  // backpack
-  ctx.fillStyle = "black";
+  ctx.fillStyle = "black"; // backpack
   ctx.fillRect(x - 4, y - 8, 8, 10);
 }
 
-// Get climber position based on elapsed time
+// Climber position
 function getClimberPosition(elapsed) {
   const climbDuration = totalTime / 2;
   const descentDuration = totalTime / 2;
-
   if (elapsed <= climbDuration) {
     const t = elapsed / climbDuration;
     const x = 50 + (canvas.width/2 - 50) * t;
@@ -150,7 +155,49 @@ function getClimberPosition(elapsed) {
   }
 }
 
-// Animation loop
+// Draw storm overlay
+function drawStorm(elapsed) {
+  const descentStart = totalTime / 2;
+  if (elapsed > descentStart && elapsed <= totalTime) {
+    const stormProgress = (elapsed - descentStart) / (totalTime/2);
+
+    // Dark overlay
+    ctx.fillStyle = `rgba(0,0,0,${0.3*stormProgress})`;
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    // Clouds
+    ctx.fillStyle = `rgba(50,50,50,${stormProgress})`;
+    ctx.beginPath();
+    ctx.ellipse(canvas.width*0.4, canvas.height*0.25, 50*stormProgress, 20*stormProgress, 0, 0, Math.PI*2);
+    ctx.ellipse(canvas.width*0.6, canvas.height*0.2, 60*stormProgress, 25*stormProgress, 0, 0, Math.PI*2);
+    ctx.fill();
+
+    // Rain
+    ctx.strokeStyle = `rgba(0,0,255,${stormProgress})`;
+    for (let i=0; i<10*stormProgress; i++){
+      const rx = Math.random()*canvas.width;
+      const ry = Math.random()*canvas.height*0.7;
+      ctx.beginPath();
+      ctx.moveTo(rx, ry);
+      ctx.lineTo(rx, ry + 10);
+      ctx.stroke();
+    }
+
+    // Lightning (random flashes)
+    if (Math.random() < 0.02) {
+      ctx.strokeStyle = `rgba(255,255,255,${stormProgress})`;
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      ctx.moveTo(canvas.width*0.7, canvas.height*0.1);
+      ctx.lineTo(canvas.width*0.68, canvas.height*0.25);
+      ctx.lineTo(canvas.width*0.72, canvas.height*0.25);
+      ctx.lineTo(canvas.width*0.7, canvas.height*0.4);
+      ctx.stroke();
+    }
+  }
+}
+
+// Animate
 function animate(timestamp) {
   if (!startTime) startTime = timestamp;
   const elapsed = timestamp - startTime;
@@ -159,23 +206,16 @@ function animate(timestamp) {
   drawMountain();
   const pos = getClimberPosition(elapsed);
   drawClimber(pos.x, pos.y);
-
-  // Storm during descent
-  if (elapsed > totalTime / 2 && elapsed <= totalTime) {
-    const stormProgress = (elapsed - totalTime/2) / (totalTime/2);
-    ctx.fillStyle = `rgba(0,0,0,${0.2 * stormProgress})`;
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-  }
+  drawStorm(elapsed);
 
   if (elapsed < totalTime) {
     requestAnimationFrame(animate);
   }
 }
 
-// Start animation
 requestAnimationFrame(animate);
 
-// Done button behavior
+// Done button
 document.getElementById("done-button").addEventListener("click", () => {
   alert("Freewrite done! (Your text is not saved.)");
 });

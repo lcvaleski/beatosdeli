@@ -3,90 +3,98 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Easy Guitar Practice - Beato's Deli</title>
+    <title>Sittin' on the porch - Beato's Deli</title>
     
     <style>
+        /* Styles matched to your existing pages */
         body {
-            font-family: Georgia, serif; /* Often used for simple, text-heavy pages */
-            background-color: white;
-            color: black;
+            text-align: center;
+            font-family: Arial, sans-serif;
+            background: #ffffff;
+            color: #000000;
             margin: 0;
-            padding: 30px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
+            padding: 30px 0;
         }
         .container {
-            max-width: 650px; /* Slightly narrower for a more focused, text-like feel */
-            width: 100%;
+            max-width: 650px;
+            width: 90%;
+            margin: 0 auto;
             padding: 0;
         }
         h1 {
+            font-weight: normal; /* Matching your h1 style */
+            font-size: 24px;
             text-align: center;
             margin-bottom: 30px;
-            font-size: 2.2em;
-            font-weight: normal; /* Less bold for a gentler title */
         }
         h2 {
-            font-size: 1.4em;
-            border-top: 1px solid black;
-            padding-top: 15px;
-            margin-top: 30px;
-            margin-bottom: 10px;
+            font-size: 18px; /* Slightly larger than standard body text */
             font-weight: normal;
+            border-top: 1px solid #aaa; /* Simple divider */
+            padding-top: 20px;
+            margin-top: 35px;
+            margin-bottom: 15px;
+            text-align: center;
         }
         p {
             margin-bottom: 15px;
-            line-height: 1.5;
+            line-height: 1.4;
+            font-size: 16px;
         }
         .section-item {
             margin-bottom: 40px;
-            text-align: left;
         }
+        
+        /* General Embed/Input Styles */
         iframe {
-            border: 1px solid black; /* Simple black border for embedding */
-            border-radius: 0; /* Square edges */
-        }
-        /* Style for the link button to make it look like a simple, functional block */
-        .action-link {
+            border: 1px solid #aaa;
+            border-radius: 0;
             display: block;
-            text-align: center;
-            background-color: white;
-            color: black;
-            padding: 10px 15px;
-            margin-top: 15px;
-            text-decoration: none;
-            border: 1px solid black;
-            font-weight: bold;
-            font-size: 1em;
+            margin: 20px auto;
         }
-        .action-link:hover {
-            background-color: #eee; /* Subtle hover effect */
+
+        /* Chord Display Specific Styles */
+        #chord-display {
+            padding: 10px 0;
+            margin: 10px 0;
+        }
+        #chord-name {
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        .chord-shape {
+            font-family: monospace; /* Essential for visual alignment */
+            font-size: 1.4em;
+            padding: 10px 15px;
+            display: inline-block;
+            border: 1px solid #333;
+        }
+        
+        /* Button Style (Matched to your button class) */
+        .action-button {
+            display: block;
+            width: 80%;
+            max-width: 300px;
+            margin: 25px auto 0;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 5px;
+            border: 1px solid #333;
+            background: #fff;
+            text-align: center;
+            transition: background-color 0.1s;
+        }
+        .action-button:hover {
+            background: #f0f0f0;
         }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h1>Easy Guitar Corner</h1>
-
-    <div class="section-item">
-        <h2>Practice Songs</h2>
-        <p>This playlist features simple tracks suitable for practicing your basic open chords.</p>
-        
-        <div style="text-align: center;">
-            <iframe 
-                style="border-radius:0" 
-                src="https://open.spotify.com/embed/playlist/37i9dQZF1DXcKgA393d9S8?utm_source=generator" 
-                width="100%" 
-                height="152" 
-                frameBorder="0" 
-                allowfullscreen="" 
-                allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" 
-                loading="lazy">
-            </iframe>
-        </div>
-    </div>
+    <h1>My Porch</h1>
 
     <div class="section-item">
         <h2>Online Tuner</h2>
@@ -99,23 +107,73 @@
                 title="Online Guitar Tuner" 
                 width="360px" 
                 height="250px" 
-                style="border-style: none; max-width: 100%;">
+                style="border-style: solid; border-width: 1px; border-color: #aaa; max-width: 100%;">
              </iframe>
         </div>
     </div>
 
     <div class="section-item">
-        <h2>Daily Chord Challenge</h2>
-        <p>Click the link below for a visual diagram of a new chord shape to practice today. This helps build finger strength and memorization.</p>
+        <h2>Practice Songs</h2>
+        <p>Play along with this selection of tracks suitable for practicing your basic open chords.</p>
         
-        <a href="https://www.parklandguitarlessons.com/online-guitar-chord-library" 
-           target="_blank" 
-           class="action-link">
-            VIEW TODAY'S CHORD DIAGRAM
-        </a>
+        <div style="text-align: center;">
+            <iframe 
+                style="border-radius:5px" 
+                src="https://open.spotify.com/playlist/7b9r8jwoudcg0vQxEFwj78?si=dfdad6871dc24b8a" 
+                width="100%" 
+                height="152" 
+                frameBorder="0" 
+                allowfullscreen="" 
+                allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" 
+                loading="lazy">
+            </iframe>
+        </div>
+    </div>
+    
+    <div class="section-item">
+        <h2>Daily Chord Challenge</h2>
+        <p>Practice a new chord shape every time you click the button below. This simple exercise builds finger strength and memorization.</p>
+        
+        <div id="chord-display">
+            </div>
+        
+        <button class="action-button" onclick="displayRandomChord()">
+            CLICK FOR A NEW CHORD
+        </button>
     </div>
 
 </div>
+
+<script>
+    // Chord data: Name and positions (Low E to High E). 'x' means muted string.
+    const chords = [
+        { name: "C Major", positions: "x 3 2 0 1 0" },
+        { name: "G Major", positions: "3 2 0 0 0 3" },
+        { name: "D Major", positions: "x x 0 2 3 2" },
+        { name: "E Minor", positions: "0 2 2 0 0 0" },
+        { name: "A Minor", positions: "x 0 2 2 1 0" },
+        { name: "F Major (Easy)", positions: "x x 3 2 1 1" }, 
+        { name: "A Major", positions: "x 0 2 2 2 0" }
+    ];
+
+    function displayRandomChord() {
+        const randomIndex = Math.floor(Math.random() * chords.length);
+        const randomChord = chords[randomIndex];
+        
+        const displayContainer = document.getElementById('chord-display');
+        
+        displayContainer.innerHTML = `
+            <div id="chord-name">${randomChord.name}</div>
+            <p style="font-size: 0.8em; margin: 5px 0 5px 0;">Fingering (Low E → High E):</p>
+            <div class="chord-shape">
+                ${randomChord.positions}
+            </div>
+        `;
+    }
+
+    // Display a random chord on page load
+    window.onload = displayRandomChord;
+</script>
 
 </body>
 </html>

@@ -110,29 +110,40 @@ function drawMountain() {
   ctx.stroke();
 }
 
-// Draw climber
-function drawClimber(x, y) {
+// Draw climber with moving arms/legs
+function drawClimber(x, y, t) {
   ctx.strokeStyle = "black";
   ctx.lineWidth = 2;
 
+  // Head
   ctx.beginPath();
-  ctx.arc(x, y - 10, 5, 0, Math.PI*2); // head
+  ctx.arc(x, y - 10, 5, 0, Math.PI*2);
   ctx.stroke();
 
+  // Torso
   ctx.beginPath();
   ctx.moveTo(x, y - 5);
-  ctx.lineTo(x, y + 10); // torso
-  ctx.moveTo(x, y + 10);
-  ctx.lineTo(x - 5, y + 20); // left leg
-  ctx.moveTo(x, y + 10);
-  ctx.lineTo(x + 5, y + 20); // right leg
-  ctx.moveTo(x, y);
-  ctx.lineTo(x - 5, y - 5); // left arm
-  ctx.moveTo(x, y);
-  ctx.lineTo(x + 5, y - 5); // right arm
+  ctx.lineTo(x, y + 10);
   ctx.stroke();
 
-  ctx.fillStyle = "black"; // backpack
+  // Legs swing
+  ctx.beginPath();
+  ctx.moveTo(x, y + 10);
+  ctx.lineTo(x - 5 + Math.sin(t*0.02)*2, y + 20);
+  ctx.moveTo(x, y + 10);
+  ctx.lineTo(x + 5 + Math.cos(t*0.02)*2, y + 20);
+  ctx.stroke();
+
+  // Arms swing
+  ctx.beginPath();
+  ctx.moveTo(x, y);
+  ctx.lineTo(x - 5 + Math.cos(t*0.02)*2, y - 5);
+  ctx.moveTo(x, y);
+  ctx.lineTo(x + 5 + Math.sin(t*0.02)*2, y - 5);
+  ctx.stroke();
+
+  // Backpack
+  ctx.fillStyle = "black";
   ctx.fillRect(x - 4, y - 8, 8, 10);
 }
 
@@ -205,7 +216,7 @@ function animate(timestamp) {
   updateTimer(elapsed);
   drawMountain();
   const pos = getClimberPosition(elapsed);
-  drawClimber(pos.x, pos.y);
+  drawClimber(pos.x, pos.y, elapsed);
   drawStorm(elapsed);
 
   if (elapsed < totalTime) {

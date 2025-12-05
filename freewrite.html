@@ -7,7 +7,7 @@
   body {
     text-align: center;
     font-family: Arial, sans-serif;
-    background: #f0f0f0;
+    background: #ffffff;
     margin: 0;
     padding: 0;
   }
@@ -18,13 +18,13 @@
   }
 
   #mountain-canvas {
-    border: 1px solid #ccc;
+    border: none;
     display: block;
     margin: 20px auto;
-    background: #0066cc;
-    width: 90%;
-    max-width: 500px;
-    height: 250px;
+    background: transparent;
+    width: 40%;
+    max-width: 250px;
+    height: 125px;
   }
 
   #typing-area {
@@ -40,14 +40,27 @@
     resize: none;
   }
 
-  #done-button {
+  .button-container {
+    margin-bottom: 40px;
+  }
+
+  button {
     padding: 10px 20px;
     font-size: 16px;
-    margin-bottom: 40px;
     cursor: pointer;
     border-radius: 5px;
     border: 1px solid #333;
     background: #fff;
+    margin: 0 10px;
+  }
+
+  button:hover {
+    background: #f0f0f0;
+  }
+
+  #spotify-player {
+    margin: 20px auto;
+    max-width: 400px;
   }
 </style>
 </head>
@@ -56,10 +69,28 @@
 <h1>Outwrite the storm</h1>
 <div id="timer">5:00</div>
 <canvas id="mountain-canvas"></canvas>
+
+<!-- Spotify Player (replace TRACK_ID with your chosen track) -->
+<div id="spotify-player">
+  <iframe style="border-radius:12px" 
+    src="https://open.spotify.com/embed/track/7jpbYyc0FzaISVxdJbtrGr?utm_source=generator" 
+    width="100%" 
+    height="80" 
+    frameBorder="0" 
+    allowfullscreen="" 
+    allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" 
+    loading="lazy">
+  </iframe>
+</div>
+
 <textarea id="typing-area" placeholder="Suddenly..."></textarea>
 <br>
-<button id="done-button">Done</button>
+<div class="button-container">
+  <button id="export-button">Export to PDF</button>
+  <button id="done-button">Done</button>
+</div>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script>
 const canvas = document.getElementById("mountain-canvas");
 const ctx = canvas.getContext("2d");
@@ -84,35 +115,59 @@ function updateTimer(elapsed) {
   timerEl.textContent = `${minutes}:${seconds.toString().padStart(2, "0")}`;
 }
 
-// Draw mountain
+// Draw mountain silhouette
 function drawMountain() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-  // Mountain body
-  ctx.fillStyle = "#888";
-  ctx.beginPath();
-  ctx.moveTo(50, canvas.height - 20);
-  ctx.lineTo(canvas.width/2, canvas.height*0.3);
-  ctx.lineTo(canvas.width - 50, canvas.height - 20);
-  ctx.closePath();
-  ctx.fill();
-
-  // Zig-zag near peak
-  ctx.strokeStyle = "#fff";
+  // Mountain range with jagged peaks (outline style)
+  ctx.strokeStyle = "#000";
+  ctx.fillStyle = "#000";
   ctx.lineWidth = 2;
+  
+  // Draw the mountain outline
   ctx.beginPath();
-  const peakX = canvas.width/2;
-  const peakY = canvas.height*0.3;
-  ctx.moveTo(peakX, peakY);
-  ctx.lineTo(peakX - 20, peakY + 20);
-  ctx.lineTo(peakX + 20, peakY + 40);
-  ctx.lineTo(peakX - 20, peakY + 60);
+  ctx.moveTo(0, canvas.height - 20);
+  
+  // Left side mountains
+  ctx.lineTo(canvas.width * 0.12, canvas.height * 0.65);
+  ctx.lineTo(canvas.width * 0.15, canvas.height * 0.55);
+  ctx.lineTo(canvas.width * 0.18, canvas.height * 0.60);
+  ctx.lineTo(canvas.width * 0.22, canvas.height * 0.50);
+  ctx.lineTo(canvas.width * 0.25, canvas.height * 0.45);
+  ctx.lineTo(canvas.width * 0.28, canvas.height * 0.50);
+  ctx.lineTo(canvas.width * 0.32, canvas.height * 0.40);
+  
+  // Main central peak
+  ctx.lineTo(canvas.width * 0.38, canvas.height * 0.45);
+  ctx.lineTo(canvas.width * 0.42, canvas.height * 0.35);
+  ctx.lineTo(canvas.width * 0.46, canvas.height * 0.30);
+  ctx.lineTo(canvas.width * 0.50, canvas.height * 0.20);
+  ctx.lineTo(canvas.width * 0.54, canvas.height * 0.30);
+  ctx.lineTo(canvas.width * 0.58, canvas.height * 0.35);
+  ctx.lineTo(canvas.width * 0.62, canvas.height * 0.45);
+  
+  // Right side mountains
+  ctx.lineTo(canvas.width * 0.68, canvas.height * 0.40);
+  ctx.lineTo(canvas.width * 0.72, canvas.height * 0.50);
+  ctx.lineTo(canvas.width * 0.75, canvas.height * 0.45);
+  ctx.lineTo(canvas.width * 0.78, canvas.height * 0.50);
+  ctx.lineTo(canvas.width * 0.82, canvas.height * 0.60);
+  ctx.lineTo(canvas.width * 0.85, canvas.height * 0.55);
+  ctx.lineTo(canvas.width * 0.88, canvas.height * 0.65);
+  
+  // Back to baseline
+  ctx.lineTo(canvas.width, canvas.height - 20);
+  ctx.lineTo(0, canvas.height - 20);
+  ctx.closePath();
+  
+  ctx.fill();
   ctx.stroke();
 }
 
 // Draw climber with moving arms/legs
 function drawClimber(x, y, t) {
-  ctx.strokeStyle = "black";
+  ctx.strokeStyle = "#0066cc";
+  ctx.fillStyle = "#0066cc";
   ctx.lineWidth = 2;
 
   // Head
@@ -143,7 +198,6 @@ function drawClimber(x, y, t) {
   ctx.stroke();
 
   // Backpack
-  ctx.fillStyle = "black";
   ctx.fillRect(x - 4, y - 8, 8, 10);
 }
 
@@ -172,19 +226,16 @@ function drawStorm(elapsed) {
   if (elapsed > descentStart && elapsed <= totalTime) {
     const stormProgress = (elapsed - descentStart) / (totalTime/2);
 
-    // Dark overlay
-    ctx.fillStyle = `rgba(0,0,0,${0.3*stormProgress})`;
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-
     // Clouds
-    ctx.fillStyle = `rgba(50,50,50,${stormProgress})`;
+    ctx.fillStyle = `rgba(150,150,150,${stormProgress * 0.7})`;
     ctx.beginPath();
     ctx.ellipse(canvas.width*0.4, canvas.height*0.25, 50*stormProgress, 20*stormProgress, 0, 0, Math.PI*2);
     ctx.ellipse(canvas.width*0.6, canvas.height*0.2, 60*stormProgress, 25*stormProgress, 0, 0, Math.PI*2);
     ctx.fill();
 
     // Rain
-    ctx.strokeStyle = `rgba(0,0,255,${stormProgress})`;
+    ctx.strokeStyle = `rgba(100,100,100,${stormProgress * 0.6})`;
+    ctx.lineWidth = 1;
     for (let i=0; i<10*stormProgress; i++){
       const rx = Math.random()*canvas.width;
       const ry = Math.random()*canvas.height*0.7;
@@ -196,8 +247,8 @@ function drawStorm(elapsed) {
 
     // Lightning (random flashes)
     if (Math.random() < 0.02) {
-      ctx.strokeStyle = `rgba(255,255,255,${stormProgress})`;
-      ctx.lineWidth = 3;
+      ctx.strokeStyle = `rgba(50,50,50,${stormProgress})`;
+      ctx.lineWidth = 2;
       ctx.beginPath();
       ctx.moveTo(canvas.width*0.7, canvas.height*0.1);
       ctx.lineTo(canvas.width*0.68, canvas.height*0.25);
@@ -225,6 +276,41 @@ function animate(timestamp) {
 }
 
 requestAnimationFrame(animate);
+
+// Export to PDF button
+document.getElementById("export-button").addEventListener("click", () => {
+  const text = document.getElementById("typing-area").value;
+  
+  if (!text.trim()) {
+    alert("Nothing to export! Write something first.");
+    return;
+  }
+
+  try {
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF();
+    
+    // Add title
+    doc.setFontSize(16);
+    doc.text("Outwrite the Storm - Freewrite", 20, 20);
+    
+    // Add date
+    doc.setFontSize(10);
+    const date = new Date().toLocaleDateString();
+    doc.text(`Date: ${date}`, 20, 30);
+    
+    // Add the written content
+    doc.setFontSize(12);
+    const splitText = doc.splitTextToSize(text, 170);
+    doc.text(splitText, 20, 40);
+    
+    // Save the PDF (downloads to user's device)
+    doc.save("freewrite.pdf");
+  } catch (error) {
+    alert("Error creating PDF. Please try again.");
+    console.error(error);
+  }
+});
 
 // Done button
 document.getElementById("done-button").addEventListener("click", () => {

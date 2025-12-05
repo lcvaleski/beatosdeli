@@ -66,7 +66,7 @@
 </head>
 <body>
 
-<h1>Outwrite the storm</h1>
+<h1 style="font-weight: normal; font-size: 24px;">Outwrite the storm</h1>
 <div id="timer">5:00</div>
 <canvas id="mountain-canvas"></canvas>
 
@@ -119,9 +119,9 @@ function updateTimer(elapsed) {
 function drawMountain() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-  // Mountain range with jagged peaks (outline style)
+  // Mountain range with jagged peaks (white with black outline)
   ctx.strokeStyle = "#000";
-  ctx.fillStyle = "#000";
+  ctx.fillStyle = "#fff";
   ctx.lineWidth = 2;
   
   // Draw the mountain outline

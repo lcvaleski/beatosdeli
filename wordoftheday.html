@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Word of the Day</title>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    text-align: center;
+    background: #fff;
+    margin: 0;
+    padding: 40px 20px;
+  }
+
+  h1 {
+    font-size: 24px;
+    font-weight: normal;
+    margin-bottom: 30px;
+  }
+
+  #word-display {
+    font-size: 48px;
+    font-weight: bold;
+    color: #0066cc;
+    margin: 40px 0;
+    min-height: 60px;
+  }
+
+  #definition {
+    font-size: 18px;
+    color: #333;
+    max-width: 600px;
+    margin: 20px auto;
+    line-height: 1.6;
+  }
+
+  button {
+    padding: 12px 24px;
+    font-size: 16px;
+    cursor: pointer;
+    border-radius: 5px;
+    border: 1px solid #333;
+    background: #fff;
+    margin-top: 20px;
+  }
+
+  button:hover {
+    background: #f0f0f0;
+  }
+
+  .back-link {
+    display: inline-block;
+    margin-top: 40px;
+    text-decoration: none;
+    color: #0066cc;
+  }
+</style>
+</head>
+<body>
+
+<h1>And the word of the day is...</h1>
+
+<div id="word-display">Loading...</div>
+<div id="definition"></div>
+
+<button id="new-word-btn">Get New Word</button>
+
+<br>
+<a class="back-link" href="index.html">← Back to Home</a>
+
+<script>
+// List of interesting words with definitions
+const words = [
+  { word: "serendipity", definition: "The occurrence of events by chance in a happy or beneficial way." },
+  { word: "ephemeral", definition: "Lasting for a very short time." },
+  { word: "mellifluous", definition: "Sweet or musical; pleasant to hear." },
+  { word: "petrichor", definition: "The pleasant smell that accompanies the first rain after a dry spell." },
+  { word: "eloquence", definition: "Fluent or persuasive speaking or writing." },
+  { word: "luminous", definition: "Full of or shedding light; bright or shining." },
+  { word: "ethereal", definition: "Extremely delicate and light in a way that seems not of this world." },
+  { word: "nebulous", definition: "In the form of a cloud or haze; unclear, vague, or ill-defined." },
+  { word: "halcyon", definition: "Denoting a period of time in the past that was idyllically happy and peaceful." },
+  { word: "ineffable", definition: "Too great or extreme to be expressed or described in words." },
+  { word: "incandescent", definition: "Emitting light as a result of being heated; passionate or brilliant." },
+  { word: "quintessential", definition: "Representing the most perfect or typical example of a quality or class." },
+  { word: "sonder", definition: "The realization that each random passerby is living a life as vivid and complex as your own." },
+  { word: "solitude", definition: "The state or situation of being alone." },
+  { word: "reverie", definition: "A state of being pleasantly lost in one's thoughts; a daydream." },
+  { word: "wanderlust", definition: "A strong desire to travel and explore the world." },
+  { word: "sonorous", definition: "Capable of producing a deep or ringing sound; imposing in style of speech." },
+  { word: "ebullience", definition: "The quality of being cheerful and full of energy; exuberance." },
+  { word: "limerence", definition: "The state of being infatuated or obsessed with another person." },
+  { word: "susurrus", definition: "A whispering or rustling sound." },
+  { word: "vespertine", definition: "Relating to, occurring, or active in the evening." },
+  { word: "iridescent", definition: "Showing luminous colors that seem to change when seen from different angles." },
+  { word: "plethora", definition: "An excess or abundance of something." },
+  { word: "labyrinthine", definition: "Like a labyrinth; irregular and twisting." },
+  { word: "euphoria", definition: "A feeling or state of intense excitement and happiness." }
+];
+
+// Get the word for today based on date
+function getTodaysWord() {
+  const today = new Date();
+  const dayOfYear = Math.floor((today - new Date(today.getFullYear(), 0, 0)) / 1000 / 60 / 60 / 24);
+  const index = dayOfYear % words.length;
+  return words[index];
+}
+
+// Display a random word
+function displayRandomWord() {
+  const randomIndex = Math.floor(Math.random() * words.length);
+  const selectedWord = words[randomIndex];
+  document.getElementById('word-display').textContent = selectedWord.word;
+  document.getElementById('definition').textContent = selectedWord.definition;
+}
+
+// Display today's word on load
+const todaysWord = getTodaysWord();
+document.getElementById('word-display').textContent = todaysWord.word;
+document.getElementById('definition').textContent = todaysWord.definition;
+
+// Button to get a new random word
+document.getElementById('new-word-btn').addEventListener('click', displayRandomWord);
+
+</script>
+
+</body>
+</html>

@@ -13,18 +13,14 @@
     padding: 40px 20px;
   }
 
-  h1 {
-    display: none;
-  }
-
   #bottle-canvas {
     border: none;
     display: block;
-    margin: 20px auto;
+    margin: 40px auto;
     background: transparent;
-    width: 60%;
-    max-width: 300px;
-    height: 350px;
+    width: 80%;
+    max-width: 500px;
+    height: 300px;
     cursor: pointer;
   }
 
@@ -52,7 +48,7 @@
   }
 
   #instruction {
-    font-size: 16px;
+    font-size: 18px;
     color: #666;
     margin: 20px 0;
   }
@@ -67,8 +63,7 @@
 </head>
 <body>
 
-<h1>Message in a Bottle</h1>
-  <div id="instruction">Ahoy there zissou, looks like you have a message</div>
+<div id="instruction">Ahoy there zissou, looks like you have a message</div>
 
 <canvas id="bottle-canvas"></canvas>
 
@@ -81,14 +76,7 @@
 const canvas = document.getElementById("bottle-canvas");
 const ctx = canvas.getContext("2d");
 
-// Make canvas responsive
-function resizeCanvas() {
-  canvas.width = canvas.clientWidth;
-  canvas.height = canvas.clientHeight;
-  drawBottle();
-}
-resizeCanvas();
-window.addEventListener("resize", resizeCanvas);
+let hasOpened = false;
 
 // Writing prompts
 const prompts = [
@@ -124,96 +112,133 @@ const prompts = [
   "What would you tell the stars if they were listening?"
 ];
 
-let hasOpened = false;
+// Set canvas size
+function resizeCanvas() {
+  const rect = canvas.getBoundingClientRect();
+  canvas.width = rect.width;
+  canvas.height = rect.height;
+  drawBottle();
+}
 
-// Draw bottle (tilted/floating style)
+// Draw the bottle
 function drawBottle() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   
+  // Save context and rotate
   ctx.save();
-  ctx.translate(canvas.width / 2, canvas.height / 2);
-  ctx.rotate(-0.3); // Tilt the bottle
+  ctx.translate(canvas.width / 2, canvas.height / 2.5);
+  ctx.rotate(-0.3);
   
-  ctx.strokeStyle = "#000";
+  const bottleLength = canvas.width * 0.55;
+  const bottleRadius = 45;
+  
   ctx.fillStyle = "#fff";
+  ctx.strokeStyle = "#000";
   ctx.lineWidth = 3;
   
-  const bottleLength = canvas.width * 0.6;
-  const bottleRadius = canvas.height * 0.12;
-  
-  // Main bottle body (horizontal cylinder)
+  // Main bottle body - elongated cylinder
   ctx.beginPath();
-  ctx.moveTo(-bottleLength/2, -bottleRadius);
-  ctx.lineTo(bottleLength/2 - bottleRadius, -bottleRadius);
-  ctx.arc(bottleLength/2 - bottleRadius, 0, bottleRadius, -Math.PI/2, Math.PI/2);
+  // Left cap
+  ctx.arc(-bottleLength/2, 0, bottleRadius, Math.PI/2, -Math.PI/2, true);
+  // Top edge
+  ctx.lineTo(bottleLength/2 - 20, -bottleRadius);
+  // Right cap (smaller, tapered)
+  ctx.arc(bottleLength/2 - 20, 0, bottleRadius, -Math.PI/2, Math.PI/2, false);
+  // Bottom edge
   ctx.lineTo(-bottleLength/2, bottleRadius);
-  ctx.arc(-bottleLength/2, 0, bottleRadius, Math.PI/2, -Math.PI/2);
   ctx.closePath();
   ctx.fill();
   ctx.stroke();
   
-  // Cork/cap on the left
-  const capWidth = bottleRadius * 0.8;
-  const capHeight = bottleRadius * 1.3;
-  ctx.fillStyle = "#8B4513";
-  ctx.fillRect(-bottleLength/2 - capWidth, -capHeight/2, capWidth, capHeight);
-  ctx.strokeRect(-bottleLength/2 - capWidth, -capHeight/2, capWidth, capHeight);
-  
-  // Cork rings
-  ctx.strokeStyle = "#654321";
-  ctx.lineWidth = 1.5;
+  // Bottle neck (narrow part on left)
+  const neckLength = 40;
+  const neckRadius = 25;
   ctx.beginPath();
-  ctx.moveTo(-bottleLength/2 - capWidth + 5, -capHeight/3);
-  ctx.lineTo(-bottleLength/2 - 5, -capHeight/3);
-  ctx.moveTo(-bottleLength/2 - capWidth + 5, capHeight/3);
-  ctx.lineTo(-bottleLength/2 - 5, capHeight/3);
+  ctx.arc(-bottleLength/2 - neckLength, 0, neckRadius, Math.PI/2, -Math.PI/2, true);
+  ctx.lineTo(-bottleLength/2, -neckRadius);
+  ctx.lineTo(-bottleLength/2, neckRadius);
+  ctx.closePath();
+  ctx.fill();
   ctx.stroke();
   
-  // Rolled paper inside (if not opened)
+  // Cork/cap
+  ctx.fillStyle = "#8B4513";
+  const capWidth = 25;
+  const capRadius = 28;
+  ctx.beginPath();
+  ctx.ellipse(-bottleLength/2 - neckLength - capWidth/2, 0, capWidth, capRadius, 0, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.stroke();
+  
+  // Cork ridges
+  ctx.strokeStyle = "#654321";
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.moveTo(-bottleLength/2 - neckLength - capWidth - 5, -15);
+  ctx.lineTo(-bottleLength/2 - neckLength + 5, -15);
+  ctx.moveTo(-bottleLength/2 - neckLength - capWidth - 5, 0);
+  ctx.lineTo(-bottleLength/2 - neckLength + 5, 0);
+  ctx.moveTo(-bottleLength/2 - neckLength - capWidth - 5, 15);
+  ctx.lineTo(-bottleLength/2 - neckLength + 5, 15);
+  ctx.stroke();
+  
+  // Paper scroll inside (if not opened)
   if (!hasOpened) {
     ctx.fillStyle = "#fffef7";
     ctx.strokeStyle = "#000";
     ctx.lineWidth = 2;
     
-    const paperLength = bottleLength * 0.4;
-    const paperRadius = bottleRadius * 0.5;
+    // Rolled paper cylinder
+    const paperLength = bottleLength * 0.35;
+    const paperRadius = 22;
     
-    // Paper roll
     ctx.beginPath();
-    ctx.ellipse(0, 0, paperLength/2, paperRadius, 0, 0, Math.PI * 2);
+    ctx.rect(-paperLength/2, -paperRadius, paperLength, paperRadius * 2);
     ctx.fill();
     ctx.stroke();
     
-    // Paper edge lines
-    ctx.strokeStyle = "#ccc";
-    ctx.lineWidth = 1;
+    // Paper end curves
     ctx.beginPath();
-    ctx.moveTo(-paperLength/3, -paperRadius);
-    ctx.lineTo(-paperLength/3, paperRadius);
-    ctx.moveTo(paperLength/3, -paperRadius);
-    ctx.lineTo(paperLength/3, paperRadius);
+    ctx.ellipse(-paperLength/2, 0, 5, paperRadius, 0, 0, Math.PI * 2);
+    ctx.fill();
     ctx.stroke();
     
-    // String/ribbon
-    ctx.strokeStyle = "#8B0000";
-    ctx.lineWidth = 2;
     ctx.beginPath();
-    ctx.moveTo(-paperLength/4, -paperRadius * 1.2);
-    ctx.lineTo(-paperLength/4, paperRadius * 1.2);
+    ctx.ellipse(paperLength/2, 0, 5, paperRadius, 0, 0, Math.PI * 2);
+    ctx.fill();
     ctx.stroke();
+    
+    // String tied around middle
+    ctx.strokeStyle = "#8B0000";
+    ctx.lineWidth = 4;
+    ctx.beginPath();
+    ctx.moveTo(-5, -paperRadius - 3);
+    ctx.lineTo(-5, paperRadius + 3);
+    ctx.moveTo(5, -paperRadius - 3);
+    ctx.lineTo(5, paperRadius + 3);
+    ctx.stroke();
+    
+    // String knot
+    ctx.fillStyle = "#8B0000";
+    ctx.beginPath();
+    ctx.ellipse(0, -paperRadius - 8, 6, 4, 0, 0, Math.PI * 2);
+    ctx.fill();
   }
   
   ctx.restore();
   
-  // Waves at bottom
+  // Waves
   ctx.strokeStyle = "#0066cc";
   ctx.lineWidth = 2;
+  const waveY = canvas.height * 0.75;
   ctx.beginPath();
-  const waveY = canvas.height * 0.85;
-  ctx.moveTo(0, waveY);
-  for (let x = 0; x < canvas.width; x += 20) {
-    ctx.quadraticCurveTo(x + 5, waveY - 5, x + 10, waveY);
-    ctx.quadraticCurveTo(x + 15, waveY + 5, x + 20, waveY);
+  for (let x = 0; x <= canvas.width; x += 20) {
+    if (x === 0) {
+      ctx.moveTo(x, waveY);
+    } else {
+      const y = waveY + Math.sin(x * 0.3) * 5;
+      ctx.lineTo(x, y);
+    }
   }
   ctx.stroke();
 }
@@ -224,7 +249,7 @@ function getRandomPrompt() {
   return prompts[randomIndex];
 }
 
-// Open bottle
+// Click handler
 canvas.addEventListener('click', function() {
   hasOpened = true;
   const messageEl = document.getElementById('message');
@@ -232,13 +257,14 @@ canvas.addEventListener('click', function() {
   
   messageEl.textContent = `"${getRandomPrompt()}"`;
   messageEl.classList.add('show');
-  instructionEl.textContent = 'Click again for a new message';
+  instructionEl.textContent = 'Click the bottle again for a new message';
   
   drawBottle();
 });
 
-drawBottle();
-
+// Initialize
+resizeCanvas();
+window.addEventListener('resize', resizeCanvas);
 </script>
 
 </body>

@@ -22,15 +22,15 @@
             padding: 0;
         }
         h1 {
-            font-weight: normal; /* Matching your h1 style */
+            font-weight: normal; 
             font-size: 24px;
             text-align: center;
             margin-bottom: 30px;
         }
         h2 {
-            font-size: 18px; /* Slightly larger than standard body text */
+            font-size: 18px; 
             font-weight: normal;
-            border-top: 1px solid #aaa; /* Simple divider */
+            border-top: 1px solid #aaa; 
             padding-top: 20px;
             margin-top: 35px;
             margin-bottom: 15px;
@@ -64,14 +64,14 @@
             margin-bottom: 10px;
         }
         .chord-shape {
-            font-family: monospace; /* Essential for visual alignment */
+            font-family: monospace; 
             font-size: 1.4em;
             padding: 10px 15px;
             display: inline-block;
             border: 1px solid #333;
         }
         
-        /* Button Style (Matched to your button class) */
+        /* Button Style */
         .action-button {
             display: block;
             width: 80%;
@@ -88,6 +88,20 @@
         }
         .action-button:hover {
             background: #f0f0f0;
+        }
+        
+        /* Simple Text Link Style */
+        .home-link {
+            display: block;
+            text-decoration: none; 
+            color: black;
+            font-size: 16px;
+            margin-top: 50px;
+            padding: 10px;
+            border-top: 1px solid #eee; 
+        }
+        .home-link:hover {
+            text-decoration: underline;
         }
     </style>
 </head>
@@ -113,19 +127,19 @@
     </div>
 
     <div class="section-item">
-        <h2>Songy song songs </h2>
+        <h2>Easy Songs</h2>
         <p>Gotta start somewhere amiright? Song ideas here</p>
         
         <div style="text-align: center;">
             <iframe 
-                style="border-radius:5px" 
-                src="https://open.spotify.com/playlist/7b9r8jwoudcg0vQxEFwj78?si=7336e75d1e3f45ea" 
+                src="https://open.spotify.com/embed/playlist/0acktIXoJ32jPxHQBuQNpf?utm_source=generator" 
                 width="100%" 
                 height="152" 
                 frameBorder="0" 
                 allowfullscreen="" 
                 allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" 
-                loading="lazy">
+                loading="lazy"
+                style="border: 1px solid #aaa; display: block; margin: 20px auto;">
             </iframe>
         </div>
     </div>
@@ -138,9 +152,11 @@
             </div>
         
         <button class="action-button" onclick="displayRandomChord()">
-            Tryhards click here for another chord!
+            Random Chord
         </button>
     </div>
+    
+    <a href="/" class="home-link">Go Home</a>
 
 </div>
 
@@ -152,7 +168,7 @@
         { name: "D Major", positions: "x x 0 2 3 2" },
         { name: "E Minor", positions: "0 2 2 0 0 0" },
         { name: "A Minor", positions: "x 0 2 2 1 0" },
-        { name: "F Major (Easy)", positions: "x x 3 2 1 1" }, 
+        { name: "F Major (3-Finger)", positions: "x x 3 2 1 1" }, 
         { name: "A Major", positions: "x 0 2 2 2 0" }
     ];
 

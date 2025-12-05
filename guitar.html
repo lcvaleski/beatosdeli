@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Easy Guitar Practice & Chords</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><text y='20' font-size='20'>🥪</text></svg>">
+    
+    <style>
+        body {
+            font-family: sans-serif;
+            line-height: 1.6;
+            margin: 20px;
+            background-color: #f4f4f9;
+            color: #333;
+        }
+        .container {
+            max-width: 900px;
+            margin: auto;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h1, h2 {
+            color: #0275d8;
+            text-align: center;
+            border-bottom: 2px solid #0275d8;
+            padding-bottom: 10px;
+            margin-bottom: 30px;
+        }
+        .section {
+            margin-bottom: 40px;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            background-color: #ffffff;
+        }
+        .tuner-widget, .daily-chord {
+            text-align: center;
+        }
+        .chord-box {
+            font-family: monospace;
+            font-size: 1.5em;
+            padding: 15px;
+            margin-top: 10px;
+            display: inline-block;
+            background-color: #e6f7ff;
+            border: 2px solid #0275d8;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>🎸 Your Daily Guitar Practice Hub 🎶</h1>
+
+    <div class="section">
+        <h2>🎵 Easy 3-Chord Songs Playlist</h2>
+        <p style="text-align: center;">Press play and practice your chords along with these beginner-friendly tracks!</p>
+        
+        <iframe 
+            style="border-radius:12px" 
+            src="https://open.spotify.com/embed/playlist/37i9dQZF1DXcKgA393d9S8?utm_source=generator" 
+            width="100%" 
+            height="352" 
+            frameBorder="0" 
+            allowfullscreen="" 
+            allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" 
+            loading="lazy">
+        </iframe>
+    </div>
+
+    <div class="section tuner-widget">
+        <h2>🎤 Free Online Guitar Tuner</h2>
+        <p>Click "Allow" for microphone access to tune your instrument directly on this page.</p>
+        
+        <iframe
+            src="https://guitarapp.com/tools/tuner-widget/"
+            width="100%"
+            height="350"
+            frameborder="0"
+            allow="microphone"
+            style="max-width: 600px; border-radius: 10px; box-shadow: 0 4px 8px rgba(0,0,0,0.1);"
+        ></iframe>
+    </div>
+
+    <div class="section daily-chord">
+        <h2>🗓️ Daily Chord Challenge</h2>
+        <p>Learn and master this chord shape today. The chord changes every 24 hours!</p>
+        <div id="daily-chord-container">
+            </div>
+    </div>
+
+</div>
+
+<script>
+    // A simple array of beginner chords
+    const beginnerChords = [
+        { name: "C Major", positions: "x 3 2 0 1 0" },
+        { name: "G Major", positions: "3 2 0 0 0 3" },
+        { name: "D Major", positions: "x x 0 2 3 2" },
+        { name: "E Minor", positions: "0 2 2 0 0 0" },
+        { name: "A Minor", positions: "x 0 2 2 1 0" },
+        { name: "F Major (Easy)", positions: "x x 3 2 1 1" }, 
+        { name: "A Major", positions: "x 0 2 2 2 0" }
+    ];
+
+    function displayDailyChord() {
+        // Calculate the day of the year (0 to 365)
+        const now = new Date();
+        const start = new Date(now.getFullYear(), 0, 0);
+        const diff = now - start;
+        const oneDay = 1000 * 60 * 60 * 24;
+        const dayOfYear = Math.floor(diff / oneDay);
+
+        // Use the day number to select a chord from the list (wraps around the list)
+        const chordIndex = dayOfYear % beginnerChords.length;
+        const dailyChord = beginnerChords[chordIndex];
+
+        // Output the visual representation
+        const container = document.getElementById('daily-chord-container');
+        
+        // **Simplified Visual:** Displays the name and the string positions.
+        // The numbers/X are: Low E, A, D, G, B, High E strings. 'x' means don't play.
+        container.innerHTML = `
+            <div style="font-size: 2.2em; font-weight: bold; margin-bottom: 15px; color: #cc0000;">
+                ${dailyChord.name}
+            </div>
+            <div style="font-size: 1.1em; margin-bottom: 5px;">
+                Fingering (Low E to High E):
+            </div>
+            <div class="chord-box">
+                ${dailyChord.positions}
+            </div>
+        `;
+    }
+
+    displayDailyChord();
+</script>
+
+</body>
+</html>
